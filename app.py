@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # read in the csv file
-car_ad_data = pd.read_csv(r'C:\Users\Darth Piggyus\Project-software-dev-tools\vehicles_us.csv')
+car_ad_data = pd.read_csv(r'vehicles_us.csv')
 
 # Define function to remove outliers based on z-score
 def remove_outliers(df, column, threshold=3):
