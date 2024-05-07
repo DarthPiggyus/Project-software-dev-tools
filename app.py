@@ -181,7 +181,8 @@ color_map = {True: 'red', False: 'blue'}
 fig2 = px.histogram(car_ad_data, x='days_listed', color='is_4wd', 
                    labels={'days_listed': 'Days Listed', 'is_4wd': '4WD'},
                    barmode='overlay', histnorm='percent', color_discrete_map=color_map)
-fig2.update_traces(name=['4WD', 'Non-4WD'])
+fig2.for_each_trace(lambda t: t.update(name='4WD' if t.name else 'Non-4WD'))
+
 st.plotly_chart(fig2)
 
 st.write("""
