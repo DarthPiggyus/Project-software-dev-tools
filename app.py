@@ -9,7 +9,7 @@ import seaborn as sns
 # read in the csv file
 car_ad_data = pd.read_csv(r'vehicles_us.csv')
 
-# Define function to remove outliers based on z-score
+# define function to remove outliers based on z-score
 def remove_outliers(df, column, threshold=3):
     z_scores = (df[column] - df[column].mean()) / df[column].std()
     return df[(z_scores < threshold) & (z_scores > -threshold)]
@@ -20,6 +20,12 @@ car_ad_data['cylinders'].fillna(car_ad_data['cylinders'].mean(), inplace=True)
 car_ad_data['odometer'].fillna(car_ad_data['odometer'].mean(), inplace=True)
 car_ad_data['paint_color'].fillna(car_ad_data['paint_color'].mode().iloc[0], inplace=True)
 car_ad_data['is_4wd'].fillna(0, inplace=True)
+
+# convert columns to integer type
+car_ad_data['model_year'] = car_ad_data['model_year'].astype(int)
+car_ad_data['cylinders'] = car_ad_data['cylinders'].astype(int)
+car_ad_data['odometer'] = car_ad_data['odometer'].astype(int)
+
 
 # create a new column for the maker by taking the first word in the model column
 car_ad_data['maker'] = car_ad_data['model'].apply(lambda x:x.split()[0])
@@ -42,7 +48,7 @@ st.dataframe(car_ad_data)
 st.header('Vehicles by maker')
 fig4 = px.histogram(car_ad_data,  x='maker', color='type')
 
-# Update axes labels if fig is not None
+# update axes labels if fig is not None
 fig4.update_xaxes(title='Maker')
 fig4.update_yaxes(title='Vehicles Sold')
 st.plotly_chart(fig4)
@@ -51,7 +57,7 @@ st.write("""
 This plot shows that Ford and Chevrolet far exceed other makers in the volume of used vehicles sold. The largest portion of these sales for the two companies are comprised of truck sales.
 """)
 
-# creat a histogram comparing the vehicle condition to the year
+# create a histogram comparing the vehicle condition to the year
 car_ad_data_years = remove_outliers(car_ad_data, 'model_year')
 
 st.header('Vehicle Condition by Model Year')
@@ -114,15 +120,15 @@ default_maker = 'ford'
 # Scatter plot using Plotly Express
 st.header('Scatter Plot of Price vs Odometer')
 
-# Dropdown for selecting maker
+# dropdown for selecting maker
 selected_maker = st.selectbox('Select Maker', 
                               options=maker_list, 
                               index=list(maker_list).index(default_maker))
 
-# Filter data based on selected maker
+# filter data based on selected maker
 filtered_data = car_ad_data_clean[car_ad_data_clean['maker'] == selected_maker]
 
-# Scatter plot using Plotly Express
+# scatter plot using Plotly Express
 scatter_plot = px.scatter(filtered_data, 
                           x='odometer', 
                           y='price', 
@@ -133,23 +139,23 @@ st.write("""
 This plot compares a vehicles odometer to the price it sold for, based on it's maker. The plot shows a clear trend as the odometer increases the price of the vehicles go down.
 """)
 
-# Count frequency of each paint color
+# count frequency of each paint color
 color_counts = car_ad_data['paint_color'].value_counts().to_dict()
 
-# Create word cloud with each color displayed in its own color
+# create word cloud with each color displayed in its own color
 def color_func(word, font_size, position, orientation, random_state=None, **kwargs):
     return 'white'  # We'll set all words to be displayed in white color
 
-# Create word cloud
+# create word cloud
 wordcloud = WordCloud(width=800, height=400, background_color='black')
 
-# Generate word cloud from frequencies
+# generate word cloud from frequencies
 wordcloud.generate_from_frequencies(color_counts)
 
-# Apply color function
+# apply color function
 wordcloud.recolor(color_func=color_func)
 
-# Display word cloud
+# display word cloud
 st.header('Word Cloud of Vehicle Colors')
 fig, ax = plt.subplots(figsize=(10, 5))
 ax.imshow(wordcloud, interpolation='bilinear')
@@ -157,7 +163,7 @@ ax.axis('off')
 st.pyplot(fig)
 
 st.write("""
-Her you can see in the word cloud that white cars are the most common color of car resold.
+Here you can see in the word cloud that white cars are the most common color of car resold.
 """)
 
 # create a box plot showing price distribution between fuel types and price
@@ -172,10 +178,10 @@ st.write("""
 This plot is showing that, on average, hybrid and electric vehicles sell at a much lower price than other fuel types do. While gas vehicles have a number of outliers on the upper end of the graph.
 """)
 
-# Convert 'is_4wd' column to boolean type
+# convert 'is_4wd' column to boolean type
 car_ad_data['is_4wd'] = car_ad_data['is_4wd'].astype(bool)
 
-# Create a histogram comparing days listed on the market for 4WD and non-4WD vehicles
+# create a histogram comparing days listed on the market for 4WD and non-4WD vehicles
 st.header('Histogram of Days Listed by 4WD')
 color_map = {True: 'red', False: 'blue'}
 fig2 = px.histogram(car_ad_data, x='days_listed', color='is_4wd', 
@@ -186,5 +192,5 @@ fig2.for_each_trace(lambda t: t.update(name='4WD' if t.name else 'Non-4WD'))
 st.plotly_chart(fig2)
 
 st.write("""
-Here you can se there isn't really a large difference in the sales between 4wd and non-4wd vehicles.
+Here you can see there isn't really a large difference in the sales between 4wd and non-4wd vehicles.
 """)
