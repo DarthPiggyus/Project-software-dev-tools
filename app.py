@@ -42,13 +42,10 @@ st.dataframe(car_ad_data)
 st.header('Vehicles by maker')
 fig4 = px.histogram(car_ad_data,  x='maker', color='type')
 
-if fig4 is None:
-    st.error("Error: Failed to create histogram.")
-else:
-    # Update axes labels if fig is not None
-    fig4.update_xaxes(title='Maker')
-    fig4.update_yaxes(title='Vehicles Sold')
-    st.plotly_chart(fig4)
+# Update axes labels if fig is not None
+fig4.update_xaxes(title='Maker')
+fig4.update_yaxes(title='Vehicles Sold')
+st.plotly_chart(fig4)
 
 st.write("""
 This plot shows that Ford and Chevrolet far exceed other makers in the volume of used vehicles sold. The largest portion of these sales for the two companies are comprised of truck sales.
@@ -65,13 +62,12 @@ histogram_fig = px.histogram(car_ad_data_years,
 
 # adjust the spacing between bins
 histogram_fig.update_layout(bargap=0.1)  # Set the gap between bars to 0.1
-st.write(histogram_fig)
 histogram_fig.update_xaxes(title='Model Year')
 histogram_fig.update_yaxes(title='Vehicles Sold')
 st.plotly_chart(histogram_fig)
 
 st.write("""
-         In this plot you can see that most cars sold were manufactured in 09-10 and are still in good to excellent condition. Vehilces made prior to 2000 don't seem to sell as often but are still in fairly good condition.
+         In this plot you can see that the most cars sold were manufactured in 09-10 and are still in good to excellent condition. Vehilces made prior to 2000 don't seem to sell as often but are still in fairly good condition.
 """)
 
 # remove outliers from 'odometer' and 'price' columns
@@ -94,9 +90,9 @@ df_filtered = car_ad_data_clean[mask_filter]
 # add a checkbox if a user wants to normalize the histogram
 normalize = st.checkbox('Normalize histogram', value=True)
 if normalize:
-    histnorm = 'Percent of Vehicles Sold'
+    histnorm = 'percent'
 else:
-    histnorm = 'Number of Vehicles Sold'
+    histnorm = None
 
 # create a plotly histogram figure
 st.write(px.histogram(df_filtered,
