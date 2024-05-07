@@ -165,7 +165,8 @@ car_ad_data['is_4wd'] = car_ad_data['is_4wd'].astype(bool)
 
 # Create a histogram comparing days listed on the market for 4WD and non-4WD vehicles
 st.header('Histogram of Days Listed by 4WD')
+color_map = {True: 'red', False: 'blue'}
 fig2 = px.histogram(car_ad_data, x='days_listed', color='is_4wd', 
                    labels={'days_listed': 'Days Listed', 'is_4wd': '4WD'},
-                   barmode='overlay', histnorm='percent')
+                   barmode='overlay', histnorm='percent', color_discrete_map=color_map)
 st.plotly_chart(fig2)
