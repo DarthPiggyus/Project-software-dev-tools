@@ -73,6 +73,7 @@ st.write("""
 # remove outliers from 'odometer' and 'price' columns
 car_ad_data_clean = remove_outliers(car_ad_data, 'odometer')
 car_ad_data_clean = remove_outliers(car_ad_data_clean, 'price')
+car_ad_data_clean = remove_outliers(car_ad_data_clean, 'days_listed')
 
 st.header('Compare price distribution between makers')
 # get the list of car makers
@@ -159,17 +160,12 @@ ax.set_xlabel('Fuel Type')
 ax.set_ylabel('Price in USD')
 st.pyplot(fig)
 
-# Filter the DataFrame to create separate datasets for 4WD and non-4WD vehicles
-four_wd = car_ad_data[car_ad_data['is_4wd'] == 1]
-non_4wd = car_ad_data[car_ad_data['is_4wd'] == 0]
+# Convert 'is_4wd' column to boolean type
+car_ad_data['is_4wd'] = car_ad_data['is_4wd'].astype(bool)
 
-# Plot histograms for each dataset
-fig2 = px.histogram(four_wd, x='days_listed', title='Days Listed on Market for 4WD Vehicles')
-fig2.update_layout(xaxis_title='Days Listed', yaxis_title='Number of Vehicles')
-
-fig3 = px.histogram(non_4wd, x='days_listed', title='Days Listed on Market for Non-4WD Vehicles')
-fig3.update_layout(xaxis_title='Days Listed', yaxis_title='Number of Vehicles')
-
-# Display the histograms
+# Create a histogram comparing days listed on the market for 4WD and non-4WD vehicles
+st.header('Histogram of Days Listed by 4WD')
+fig2 = px.histogram(car_ad_data, x='days_listed', color='is_4wd', 
+                   labels={'days_listed': 'Days Listed', 'is_4wd': '4WD'},
+                   barmode='overlay', histnorm='percent')
 st.plotly_chart(fig2)
-st.plotly_chart(fig3)
