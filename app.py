@@ -18,10 +18,17 @@ def remove_outliers(df, column, threshold=3):
 car_ad_data['model_year'].fillna(car_ad_data['model_year'].mean(), inplace=True)
 car_ad_data['cylinders'].fillna(car_ad_data['cylinders'].mean(), inplace=True)
 car_ad_data['odometer'].fillna(car_ad_data['odometer'].mean(), inplace=True)
-car_ad_data['paint_color'].fillna(car_ad_data['paint_color'].mode(), inplace=True)
+car_ad_data['paint_color'].fillna(car_ad_data['paint_color'].mode().iloc[0], inplace=True)
+car_ad_data['is_4wd'].fillna(0, inplace=True)
 
 # create a new column for the maker by taking the first word in the model column
 car_ad_data['maker'] = car_ad_data['model'].apply(lambda x:x.split()[0])
+
+# add title and introduction
+st.title('Vehicle Sales Analysis')
+st.write("""
+Welcome to the Vehicle Sales Analysis App! This dashboard provides insights into used vehicle sales data, including information about makers, models, prices, and more. Using this data you'll be able to compare different aspects of the used vehicle sales and make clear inferences from the plots provided.
+""")
 
 # make the data easily viewable to the client
 st.header('Data viewer')
@@ -32,50 +39,58 @@ if not show_manuf_1k_ads:
 # show the breakdown of vehicle types by maker
 st.dataframe(car_ad_data)
 st.header('Vehicles by maker')
-st.write(px.histogram(car_ad_data, 
-                      x='maker', 
-                      color='type'))
+st.write(px.histogram(car_ad_data,  x='maker', color='type'))
+fig.update_xaxes(title='Maker')
+fig.update_yaxes(title='Vehicles Sold')
+st.plotly_chart(fig)
+
+st.write("""
+This plot shows that Ford and Chevrolet far exceed other makers in the volume of used vehicles sold. The largest portion of these sales for the two companies are comprised of truck sales.
+""")
 
 # creat a histogram comparing the vehicle condition to the year
-#st.header('Histogram of `condition` vs `model_year`')
 car_ad_data_years = remove_outliers(car_ad_data, 'model_year')
-#st.write(px.histogram(car_ad_data_years, 
-#                      nbins=20, 
-#                      rwidth=0.8, 
-#                      x='model_year', 
-#                      color='condition'))
 
-st.header('Histogram of `condition` vs `model_year`')
+st.header('Vehicle Condition by Model Year')
 histogram_fig = px.histogram(car_ad_data_years, 
                               nbins=30,  
                               x='model_year', 
                               color='condition')
 
-# Adjust the spacing between bins
+# adjust the spacing between bins
 histogram_fig.update_layout(bargap=0.1)  # Set the gap between bars to 0.1
-
-
 st.write(histogram_fig)
+histogram_fig.update_xaxes(title='Model Year')
+histogram_fig.update_yaxes(title='Vehicles Sold')
+st.plotly_chart(histogram_fig)
+
+st.write("""
+         In this plot you can see that most cars sold were manufactured in 09-10 and are still in good to excellent condition. Vehilces made prior to 2000 don't seem to sell as often but are still in fairly good condition.
+""")
+
+# remove outliers from 'odometer' and 'price' columns
+car_ad_data_clean = remove_outliers(car_ad_data, 'odometer')
+car_ad_data_clean = remove_outliers(car_ad_data_clean, 'price')
 
 st.header('Compare price distribution between makers')
 # get the list of car makers
-maker_list = sorted(car_ad_data['maker'].unique())
+maker_list = sorted(car_ad_data_clean['maker'].unique())
 # get user inputs from a dropdown menu
 maker_1 = st.selectbox('Select maker 1',
                               maker_list, index=maker_list.index('chevrolet')) # default pre-selected option)
 # repeat for the second dropdown menu
 maker_2 = st.selectbox('Select maker 2',
-                              maker_list, index=maker_list.index('hyundai'))
+                              maker_list, index=maker_list.index('dodge'))
 # filter the dataframe 
-mask_filter = (car_ad_data['maker'] == maker_1) | (car_ad_data['maker'] == maker_2)
-df_filtered = car_ad_data[mask_filter]
+mask_filter = (car_ad_data_clean['maker'] == maker_1) | (car_ad_data_clean['maker'] == maker_2)
+df_filtered = car_ad_data_clean[mask_filter]
 
 # add a checkbox if a user wants to normalize the histogram
 normalize = st.checkbox('Normalize histogram', value=True)
 if normalize:
-    histnorm = 'percent'
+    histnorm = 'Percent of Vehicles Sold'
 else:
-    histnorm = None
+    histnorm = 'Number of Vehicles Sold'
 
 # create a plotly histogram figure
 st.write(px.histogram(df_filtered,
@@ -84,13 +99,13 @@ st.write(px.histogram(df_filtered,
                       color='maker',
                       histnorm=histnorm,
                       barmode='overlay',
-                      color_discrete_map={'chevrolet': 'red', 'hyundai': 'blue'}))
+                      color_discrete_map={maker_1: 'red', maker_2: 'blue'}))
 
-# Remove outliers from 'odometer' and 'price' columns
-car_ad_data_clean = remove_outliers(car_ad_data, 'odometer')
-car_ad_data_clean = remove_outliers(car_ad_data_clean, 'price')
+st.write("""
+Here you're able to compare 2 different manufactures and see the difference in the price ranges between them. Using the button to normalize the graph you convert the y-axis into a percentage of total vehicles sales instead of show the number of vehicles sold.
+""")
 
-# Default maker
+# define the default maker
 default_maker = 'ford'
 
 # Scatter plot using Plotly Express
@@ -128,16 +143,31 @@ wordcloud.generate_from_frequencies(color_counts)
 wordcloud.recolor(color_func=color_func)
 
 # Display word cloud
+st.header('Word Cloud of Vehicle Colors')
 fig, ax = plt.subplots(figsize=(10, 5))
 ax.imshow(wordcloud, interpolation='bilinear')
 ax.axis('off')
-ax.set_title('Word Cloud of Vehicle Colors')
 st.pyplot(fig)
 
 # create a box plot showing price distribution between fuel types and price
+st.header('Comparison of Vheicle Price by Fuel Type')
 fig, ax = plt.subplots(figsize=(10, 6))
 sns.boxplot(data=car_ad_data_clean, x='fuel', y='price', ax=ax)
-ax.set_title('Comparison of Price by Fuel Type')
 ax.set_xlabel('Fuel Type')
-ax.set_ylabel('Price')
+ax.set_ylabel('Price in USD')
 st.pyplot(fig)
+
+# Filter the DataFrame to create separate datasets for 4WD and non-4WD vehicles
+4wd = car_ad_data[car_ad_data['is_4wd'] == 1]
+non_4wd = car_ad_data[car_ad_data['is_4wd'] == 0]
+
+# Plot histograms for each dataset
+fig2 = px.histogram(4wd, x='days_listed', title='Days Listed on Market for 4WD Vehicles')
+fig2.update_layout(xaxis_title='Days Listed', yaxis_title='Number of Vehicles')
+
+fig3 = px.histogram(non_4wd, x='days_listed', title='Days Listed on Market for Non-4WD Vehicles')
+fig3.update_layout(xaxis_title='Days Listed', yaxis_title='Number of Vehicles')
+
+# Display the histograms
+st.plotly_chart(fig2)
+st.plotly_chart(fig3)
