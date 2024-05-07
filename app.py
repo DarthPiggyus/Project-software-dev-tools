@@ -197,5 +197,5 @@ Here you can see there isn't really a large difference in the sales between 4wd 
 
 st.header('Conclusion')
 st.write("""
-In conclusion we can see that Ford and Chevy are the most prolific makers in the used sales market. Most vehicles appear to be white or black trucks and SUVs in excellent condition.
+In conclusion we can see that Ford and Chevy are the most prolific makers in the used sales market. Most vehicles appear to be white or black trucks and SUVs in excellent condition. The high the odometer on the vehicle, however, the less it will typically sell for despite the maker.
 """)
