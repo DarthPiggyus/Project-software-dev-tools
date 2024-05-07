@@ -175,7 +175,7 @@ ax.set_ylabel('Price in USD')
 st.pyplot(fig)
 
 st.write("""
-This plot is showing that, on average, hybrid and electric vehicles sell at a much lower price than other fuel types do. While gas vehicles have a number of outliers on the upper end of the graph.
+This plot is showing that, on average, hybrid and electric vehicles sell at a much lower price than other fuel types do. While gas vehicles have a number of outliers on the upper end of the graph though their median price is on par with hybrids and electrics.
 """)
 
 # convert 'is_4wd' column to boolean type
@@ -193,4 +193,9 @@ st.plotly_chart(fig2)
 
 st.write("""
 Here you can see there isn't really a large difference in the sales between 4wd and non-4wd vehicles.
+""")
+
+st.header('Conclusion')
+st.write("""
+In conclusion we can see that Ford and Chevy are the most prolific makers in the used sales market. Most vehicles appear to be white or black trucks and SUVs in excellent condition.
 """)
