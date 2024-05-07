@@ -48,7 +48,7 @@ else:
     # Update axes labels if fig is not None
     fig4.update_xaxes(title='Maker')
     fig4.update_yaxes(title='Vehicles Sold')
-    st.plotly_chart(fig)
+    st.plotly_chart(fig4)
 
 st.write("""
 This plot shows that Ford and Chevrolet far exceed other makers in the volume of used vehicles sold. The largest portion of these sales for the two companies are comprised of truck sales.
