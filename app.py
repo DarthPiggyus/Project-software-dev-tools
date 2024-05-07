@@ -38,11 +38,17 @@ if not show_manuf_1k_ads:
 
 # show the breakdown of vehicle types by maker
 st.dataframe(car_ad_data)
+
 st.header('Vehicles by maker')
-fig4 = st.write(px.histogram(car_ad_data,  x='maker', color='type'))
-fig4.update_xaxes(title='Maker')
-fig4.update_yaxes(title='Vehicles Sold')
-st.plotly_chart(fig4)
+fig4 = px.histogram(car_ad_data,  x='maker', color='type')
+
+if fig4 is None:
+    st.error("Error: Failed to create histogram.")
+else:
+    # Update axes labels if fig is not None
+    fig4.update_xaxes(title='Maker')
+    fig4.update_yaxes(title='Vehicles Sold')
+    st.plotly_chart(fig)
 
 st.write("""
 This plot shows that Ford and Chevrolet far exceed other makers in the volume of used vehicles sold. The largest portion of these sales for the two companies are comprised of truck sales.
