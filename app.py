@@ -39,10 +39,10 @@ if not show_manuf_1k_ads:
 # show the breakdown of vehicle types by maker
 st.dataframe(car_ad_data)
 st.header('Vehicles by maker')
-st.write(px.histogram(car_ad_data,  x='maker', color='type'))
-fig.update_xaxes(title='Maker')
-fig.update_yaxes(title='Vehicles Sold')
-st.plotly_chart(fig)
+fig4 = st.write(px.histogram(car_ad_data,  x='maker', color='type'))
+fig4.update_xaxes(title='Maker')
+fig4.update_yaxes(title='Vehicles Sold')
+st.plotly_chart(fig4)
 
 st.write("""
 This plot shows that Ford and Chevrolet far exceed other makers in the volume of used vehicles sold. The largest portion of these sales for the two companies are comprised of truck sales.
@@ -158,11 +158,11 @@ ax.set_ylabel('Price in USD')
 st.pyplot(fig)
 
 # Filter the DataFrame to create separate datasets for 4WD and non-4WD vehicles
-4wd = car_ad_data[car_ad_data['is_4wd'] == 1]
+four_wd = car_ad_data[car_ad_data['is_4wd'] == 1]
 non_4wd = car_ad_data[car_ad_data['is_4wd'] == 0]
 
 # Plot histograms for each dataset
-fig2 = px.histogram(4wd, x='days_listed', title='Days Listed on Market for 4WD Vehicles')
+fig2 = px.histogram(four_wd, x='days_listed', title='Days Listed on Market for 4WD Vehicles')
 fig2.update_layout(xaxis_title='Days Listed', yaxis_title='Number of Vehicles')
 
 fig3 = px.histogram(non_4wd, x='days_listed', title='Days Listed on Market for Non-4WD Vehicles')
