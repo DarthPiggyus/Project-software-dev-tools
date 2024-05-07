@@ -129,6 +129,10 @@ scatter_plot = px.scatter(filtered_data,
                           title=f'Price vs Odometer for {selected_maker.capitalize()}')
 st.plotly_chart(scatter_plot)
 
+st.write("""
+This plot compares a vehicles odometer to the price it sold for, based on it's maker. The plot shows a clear trend as the odometer increases the price of the vehicles go down.
+""")
+
 # Count frequency of each paint color
 color_counts = car_ad_data['paint_color'].value_counts().to_dict()
 
@@ -152,6 +156,10 @@ ax.imshow(wordcloud, interpolation='bilinear')
 ax.axis('off')
 st.pyplot(fig)
 
+st.write("""
+Her you can see in the word cloud that white cars are the most common color of car resold.
+""")
+
 # create a box plot showing price distribution between fuel types and price
 st.header('Comparison of Vheicle Price by Fuel Type')
 fig, ax = plt.subplots(figsize=(10, 6))
@@ -159,6 +167,10 @@ sns.boxplot(data=car_ad_data_clean, x='fuel', y='price', ax=ax)
 ax.set_xlabel('Fuel Type')
 ax.set_ylabel('Price in USD')
 st.pyplot(fig)
+
+st.write("""
+This plot is showing that, on average, hybrid and electric vehicles sell at a much lower price than other fuel types do. While gas vehicles have a number of outliers on the upper end of the graph.
+""")
 
 # Convert 'is_4wd' column to boolean type
 car_ad_data['is_4wd'] = car_ad_data['is_4wd'].astype(bool)
@@ -169,4 +181,9 @@ color_map = {True: 'red', False: 'blue'}
 fig2 = px.histogram(car_ad_data, x='days_listed', color='is_4wd', 
                    labels={'days_listed': 'Days Listed', 'is_4wd': '4WD'},
                    barmode='overlay', histnorm='percent', color_discrete_map=color_map)
+fig2.update_traces(name=['4WD', 'Non-4WD'])
 st.plotly_chart(fig2)
+
+st.write("""
+Here you can se there isn't really a large difference in the sales between 4wd and non-4wd vehicles.
+""")
