@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 # read in the csv file
 car_ad_data = pd.read_csv(r'vehicles_us.csv')
@@ -15,11 +16,62 @@ def remove_outliers(df, column, threshold=3):
     return df[(z_scores < threshold) & (z_scores > -threshold)]
 
 # remove Null values from the data
-car_ad_data['model_year'].fillna(car_ad_data['model_year'].mean(), inplace=True)
-car_ad_data['cylinders'].fillna(car_ad_data['cylinders'].mean(), inplace=True)
-car_ad_data['odometer'].fillna(car_ad_data['odometer'].mean(), inplace=True)
-car_ad_data['paint_color'].fillna(car_ad_data['paint_color'].mode().iloc[0], inplace=True)
-car_ad_data['is_4wd'].fillna(0, inplace=True)
+# Group by 'maker' and 'model' and calculate median model year
+median_model_year = car_ad_data.groupby(['maker', 'model'])['model_year'].median()
+
+# Fill missing values in 'model_year' column with median values based on groups
+car_ad_data['model_year'] = car_ad_data.apply(
+    lambda row: median_model_year.loc[(row['maker'], row['model'])] if pd.isnull(row['model_year']) else row['model_year'], axis=1)
+
+# Group by 'model' and 'model_year' and calculate median number of cylinders
+median_cylinders = car_ad_data.groupby(['model', 'model_year'])['cylinders'].median()
+
+# Fill missing values in 'cylinders' column with median values based on groups
+car_ad_data['cylinders'] = car_ad_data.apply(
+    lambda row: median_cylinders.loc[(row['model'], row['model_year'])] if pd.isnull(row['cylinders']) else row['cylinders'], axis=1)
+
+# Calculate the average of the 'cylinders' column
+average_cylinders = car_ad_data['cylinders'].mean()
+
+# Fill missing values in the 'cylinders' column with the average
+car_ad_data['cylinders'] = car_ad_data['cylinders'].fillna(average_cylinders)
+
+# Group by 'model' and 'model_year' and calculate median number of odometer
+median_odometer = car_ad_data.groupby(['model', 'model_year'])['odometer'].median()
+
+# Fill missing values in 'odometer' column with median values based on groups
+car_ad_data['odometer'] = car_ad_data.apply(
+    lambda row: median_odometer.loc[(row['model'], row['model_year'])] if pd.isnull(row['odometer']) else row['odometer'], axis=1)
+
+# Calculate the average of the 'odometer' column
+average_odometer = car_ad_data['odometer'].mean()
+
+# Fill missing values in the 'odometer' column with the average
+car_ad_data['odometer'] = car_ad_data['odometer'].fillna(average_odometer)
+
+# Group by 'model' and 'model_year' and find the mode of 'paint_color'
+mode_paint_color = car_ad_data.groupby(['model', 'model_year'])['paint_color'].agg(lambda x: x.mode().iloc[0] if not x.mode().empty else np.nan)
+
+# Fill missing values in 'paint_color' column with mode values based on groups
+car_ad_data['paint_color'] = car_ad_data.apply(
+    lambda row: mode_paint_color.loc[(row['model'], row['model_year'])] if pd.isnull(row['paint_color']) else row['paint_color'], axis=1)
+
+# Calculate the average of the 'paint_color' column
+average_color = car_ad_data['paint_color'].mode().iloc[0]
+
+# Fill missing values in the 'paint_color' column with the average
+car_ad_data['paint_color'] = car_ad_data['paint_color'].fillna(average_color)
+
+# Group by 'model' and 'model_year' and find the mode of 'is_4wd'
+mode_is_4wd = car_ad_data.groupby(['model', 'model_year'])['is_4wd'].agg(lambda x: x.mode().iloc[0] if not x.mode().empty else np.nan)
+
+# Fill missing values in 'is_4wd' column with mode values based on groups
+car_ad_data['is_4wd'] = car_ad_data.apply(
+    lambda row: mode_is_4wd.loc[(row['model'], row['model_year'])] if pd.isnull(row['is_4wd']) else row['is_4wd'], axis=1)
+
+# Replace any remaining null values in 'is_4wd' column with 0
+car_ad_data['is_4wd'] = car_ad_data['is_4wd'].fillna(0)
+
 
 # convert columns to integer type
 car_ad_data['model_year'] = car_ad_data['model_year'].astype(int)
