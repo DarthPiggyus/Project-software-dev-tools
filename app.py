@@ -126,7 +126,7 @@ st.write("""
          In this plot you can see that the most cars sold were manufactured in 09-10 and are still in good to excellent condition. Vehilces made prior to 2000 don't seem to sell as often but are still in fairly good condition.
 """)
 
-# remove outliers from 'odometer' and 'price' columns
+# remove outliers from 'odometer', 'price' and 'days_listed' columns
 car_ad_data_clean = remove_outliers(car_ad_data, 'odometer')
 car_ad_data_clean = remove_outliers(car_ad_data_clean, 'price')
 car_ad_data_clean = remove_outliers(car_ad_data_clean, 'days_listed')
@@ -235,9 +235,9 @@ car_ad_data['is_4wd'] = car_ad_data['is_4wd'].astype(bool)
 st.header('Histogram of Days Listed by 4WD')
 color_map = {True: 'red', False: 'blue'}
 fig2 = px.histogram(car_ad_data, x='days_listed', color='is_4wd', 
-                   labels={'days_listed': 'Days Listed', 'is_4wd': '4WD'},
+                   labels={'days_listed': 'Days Listed', 'is_4wd': 'Vehicle Type'},
                    barmode='overlay', histnorm=histnorm, color_discrete_map=color_map)
-fig2.for_each_trace(lambda t: t.update(name='4WD' if t.name else 'Non-4WD'))
+fig2.for_each_trace(lambda t: t.update(name='4WD' if t.name == True else 'Non-4WD'))
 
 # add a checkbox if a user wants to normalize the histogram
 normalize = st.checkbox('Normalize histogram 2', value=True)
@@ -245,6 +245,9 @@ if normalize:
     histnorm = 'percent'
 else:
     histnorm = None
+
+# update histogram figure with the new histnorm value
+fig2.update_traces(histnorm=histnorm)
 
 st.plotly_chart(fig2)
 
