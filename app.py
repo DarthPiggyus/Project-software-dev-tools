@@ -83,7 +83,7 @@ car_ad_data['odometer'] = car_ad_data['odometer'].astype(int)
 # add title and introduction
 st.title('Vehicle Sales Analysis')
 st.write("""
-Welcome to the Vehicle Sales Analysis App! This dashboard provides insights into used vehicle sales data, including information about makers, models, prices, and more. Using this data you'll be able to compare different aspects of the used vehicle sales and make clear inferences from the plots provided.
+Welcome to the Vehicle Sales Analysis App! This dashboard provides insights into used vehicle sales data, including information about makers, models, prices, and more. Using this data you'll be able to compare different aspects of the used vehicle sales and make clear inferences from the charts provided.
 """)
 
 # make the data easily viewable to the client
@@ -236,16 +236,23 @@ st.header('Histogram of Days Listed by 4WD')
 color_map = {True: 'red', False: 'blue'}
 fig2 = px.histogram(car_ad_data, x='days_listed', color='is_4wd', 
                    labels={'days_listed': 'Days Listed', 'is_4wd': '4WD'},
-                   barmode='overlay', histnorm='percent', color_discrete_map=color_map)
+                   barmode='overlay', histnorm=histnorm, color_discrete_map=color_map)
 fig2.for_each_trace(lambda t: t.update(name='4WD' if t.name else 'Non-4WD'))
+
+# add a checkbox if a user wants to normalize the histogram
+normalize = st.checkbox('Normalize histogram', value=True)
+if normalize:
+    histnorm = 'percent'
+else:
+    histnorm = None
 
 st.plotly_chart(fig2)
 
 st.write("""
-Here you can see there isn't really a large difference in the sales between 4wd and non-4wd vehicles.
+Here you can see there isn't really a large difference in the time it takes to sell between 4wd and non-4wd vehicles, even though there are far more 4wd vehicles.
 """)
 
 st.header('Conclusion')
 st.write("""
-In conclusion we can see that Ford and Chevy are the most prolific makers in the used sales market. Most vehicles appear to be white or black trucks and SUVs in excellent condition. The high the odometer on the vehicle, however, the less it will typically sell for despite the maker.
+In conclusion we can see that Ford and Chevy are the most prolific makers in the used sales market. Most vehicles appear to be white or black trucks and SUVs in excellent condition. The higher the odometer on the vehicle, however, the less it will typically sell for despite the maker.
 """)
