@@ -236,8 +236,9 @@ st.header('Histogram of Days Listed by 4WD')
 color_map = {True: 'red', False: 'blue'}
 fig2 = px.histogram(car_ad_data, x='days_listed', color='is_4wd', 
                    labels={'days_listed': 'Days Listed', 'is_4wd': 'Vehicle Type'},
-                   barmode='overlay', histnorm=histnorm, color_discrete_map=color_map)
-fig2.for_each_trace(lambda t: t.update(name='4WD' if t.name == True else 'Non-4WD'))
+                   barmode='overlay', histnorm='', color_discrete_map=color_map)
+fig2.for_each_trace(lambda t: t.update(name='4WD' if t.name == 'True' else 'Non-4WD'))
+fig2.update_layout(yaxis_title='Number of Vehicles')
 
 # add a checkbox if a user wants to normalize the histogram
 normalize = st.checkbox('Normalize histogram 2', value=True)
