@@ -15,6 +15,9 @@ def remove_outliers(df, column, threshold=3):
     z_scores = (df[column] - df[column].mean()) / df[column].std()
     return df[(z_scores < threshold) & (z_scores > -threshold)]
 
+# create a new column for the maker by taking the first word in the model column
+car_ad_data['maker'] = car_ad_data['model'].apply(lambda x:x.split()[0])
+
 # remove Null values from the data
 # Group by 'maker' and 'model' and calculate median model year
 median_model_year = car_ad_data.groupby(['maker', 'model'])['model_year'].median()
@@ -72,15 +75,10 @@ car_ad_data['is_4wd'] = car_ad_data.apply(
 # Replace any remaining null values in 'is_4wd' column with 0
 car_ad_data['is_4wd'] = car_ad_data['is_4wd'].fillna(0)
 
-
 # convert columns to integer type
 car_ad_data['model_year'] = car_ad_data['model_year'].astype(int)
 car_ad_data['cylinders'] = car_ad_data['cylinders'].astype(int)
 car_ad_data['odometer'] = car_ad_data['odometer'].astype(int)
-
-
-# create a new column for the maker by taking the first word in the model column
-car_ad_data['maker'] = car_ad_data['model'].apply(lambda x:x.split()[0])
 
 # add title and introduction
 st.title('Vehicle Sales Analysis')
