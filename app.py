@@ -145,7 +145,7 @@ mask_filter = (car_ad_data_clean['maker'] == maker_1) | (car_ad_data_clean['make
 df_filtered = car_ad_data_clean[mask_filter]
 
 # add a checkbox if a user wants to normalize the histogram
-normalize = st.checkbox('Normalize histogram', value=True)
+normalize = st.checkbox('Normalize histogram 1', value=True)
 if normalize:
     histnorm = 'percent'
 else:
@@ -240,8 +240,8 @@ fig2 = px.histogram(car_ad_data, x='days_listed', color='is_4wd',
 fig2.for_each_trace(lambda t: t.update(name='4WD' if t.name else 'Non-4WD'))
 
 # add a checkbox if a user wants to normalize the histogram
-normalize2 = st.checkbox('Normalize histogram', value=True)
-if normalize2:
+normalize = st.checkbox('Normalize histogram 2', value=True)
+if normalize:
     histnorm = 'percent'
 else:
     histnorm = None
