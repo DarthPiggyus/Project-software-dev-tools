@@ -238,14 +238,16 @@ fig2 = px.histogram(car_ad_data, x='days_listed', color='is_4wd',
                    labels={'days_listed': 'Days Listed', 'is_4wd': 'Vehicle Type'},
                    barmode='overlay', histnorm='', color_discrete_map=color_map)
 fig2.for_each_trace(lambda t: t.update(name='4WD' if t.name == 'True' else 'Non-4WD'))
-fig2.update_layout(yaxis_title='Number of Vehicles')
 
 # add a checkbox if a user wants to normalize the histogram
 normalize = st.checkbox('Normalize histogram 2', value=True)
 if normalize:
     histnorm = 'percent'
+    y_label = 'Percent'
 else:
     histnorm = None
+    y_label = 'Number of Vehicles'
+
 
 # update histogram figure with the new histnorm value
 fig2.update_traces(histnorm=histnorm)
