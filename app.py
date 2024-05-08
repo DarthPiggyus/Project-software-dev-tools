@@ -240,8 +240,8 @@ fig2 = px.histogram(car_ad_data, x='days_listed', color='is_4wd',
 fig2.for_each_trace(lambda t: t.update(name='4WD' if t.name else 'Non-4WD'))
 
 # add a checkbox if a user wants to normalize the histogram
-normalize = st.checkbox('Normalize histogram', value=True)
-if normalize:
+normalize2 = st.checkbox('Normalize histogram', value=True)
+if normalize2:
     histnorm = 'percent'
 else:
     histnorm = None
