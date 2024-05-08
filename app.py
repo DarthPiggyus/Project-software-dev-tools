@@ -251,6 +251,7 @@ else:
 
 # update histogram figure with the new histnorm value
 fig2.update_traces(histnorm=histnorm)
+fig2.update_layout(yaxis_title=y_label)
 
 st.plotly_chart(fig2)
 
